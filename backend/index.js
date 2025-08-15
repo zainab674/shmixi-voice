@@ -12,6 +12,7 @@ app.use(cors({
         'http://localhost:3000',
         'http://localhost:5173',
         'https://shmixi-voice.vercel.app',
+        'https://shmixi-voice.vercel.app/agent',
         process.env.FRONTEND_URL,
     ].filter(Boolean),
     credentials: true,
