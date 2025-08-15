@@ -1,7 +1,7 @@
-import catchAsyncError from "#middlewares/catchAsyncErrorMiddleware.js";
-import { createLivekitToken } from "#services/livekitService.js";
-import ErrorHandler from "#utils/ErrorHandlerUtil.js";
-import { generateRandomAlphanumeric } from "#utils/generateRandomToken.js";
+import catchAsyncError from "../middlewares/catchAsyncErrorMiddleware.js";
+import { createLivekitToken } from "../services/livekitService.js";
+import ErrorHandler from "../utils/ErrorHandlerUtil.js";
+import { generateRandomAlphanumeric } from "../utils/generateRandomToken.js";
 
 
 export const createToken = catchAsyncError(async (req, res, next) => {

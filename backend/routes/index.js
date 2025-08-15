@@ -1,5 +1,5 @@
 import express from "express";
-import livekitRoute from "#routes/livekitRoute.js";
+import livekitRoute from "./livekitRoute.js";
 
 const router = express.Router();
 

@@ -1,5 +1,5 @@
 import express from "express";
-import { createToken } from "#controllers/livekitController.js";
+import { createToken } from "../controllers/livekitController.js";
 const router = express.Router();
 
 router.route("/create-token").post(createToken);
