@@ -2,7 +2,6 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import router from "#routes/index.js";
-const PORT = process.env.PORT || 4000;
 
 const app = express();
 app.use(express.json());
@@ -27,9 +26,16 @@ app.get("/", (req, res) => {
     res.send("welcome to backend");
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+// Export for Vercel serverless function
+export default app;
+
+// Only listen on port if not in production (for local development)
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+    });
+}
 
 
 
