@@ -72,7 +72,7 @@ Appointments: ask name and email then confirm and say: "Your appointment is book
     const handlePizzaAIClick = () => {
         navigate('/agent', {
             state: {
-                prompt: `You are a helpful clothing store  call assistant for customers  at StyleHub Fashion helping customers find the perfect outfit.  If the customer is in the middle of shopping, don't start over - continue with the next logical step.
+                prompt: `You are a helpful clothing store  call assistant for customers  at StyleHub Fashion helping customers find the perfect outfit you are on voice call with customer and cannot show and send dresses only give info about what u have available.  If the customer is in the middle of shopping, don't start over - continue with the next logical step.
 
 StyleHub Fashion information:
 - Categories: Tops ($25-85), Bottoms ($30-90), Dresses ($45-150), Outerwear ($50-200), Accessories ($20-120)
@@ -131,49 +131,67 @@ RESPONSE RULES:
                     <div className="space-y-8">
                         <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-medium border border-blue-200">
                             <Sparkles className="w-4 h-4" />
-                            AI-Powered Customer Engagement
+                            Meet Shmix AI
                         </div>
-                        <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-                            Meet Your New Team Member:
-                            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> AI</span>
+                        <h1 className="text-5xl md:text-5xl font-bold leading-tight">
+                            Your Workaholic Business Buddy & New Team Member
                         </h1>
-                        <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
-                            Always On. Always Selling. Always Supporting. Boost sales, wow customers, and never miss a beat with AI tailored to your business needs.
-                        </p>
+                        <div className="space-y-4">
+                            <p className="text-xl text-slate-700 font-medium leading-relaxed">
+                                Always On. Always Selling. Always Supporting.
+                            </p>
+                            <p className="text-lg text-slate-600 leading-relaxed">
+                                No coffee breaks. No office drama.
+                            </p>
+                            <p className="text-xl text-slate-600 leading-relaxed max-w-lg">
+                                Boost sales, wow customers, and never miss a beat with AI tailored to your essential needs.
+                            </p>
+                            <p className="text-lg text-slate-700 font-medium leading-relaxed">
+                                Invest in your company with smart, reliable, non-stop help — 24/7.
+                            </p>
+                        </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6">
-                            <div className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border">
-                                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                                    <Target className="w-5 h-5 text-green-600" />
+                        <div className="grid grid-cols-1 gap-2 py-">
+                            <div className="flex items-start gap-4 p-3 bg-white rounded-xl shadow-sm border">
+                                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Target className="w-6 h-6 text-green-600" />
                                 </div>
-                                <span className="font-medium text-slate-700">Smarter Sales</span>
+                                <div>
+                                    <h3 className="font-semibold text-slate-800 mb-1">Smarter Sales</h3>
+                                    <p className="text-slate-600">Qualify leads, follow up instantly, close more deals.</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border">
-                                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                                    <Shield className="w-5 h-5 text-blue-600" />
+                            <div className="flex items-start gap-4 p-3 bg-white rounded-xl shadow-sm border">
+                                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Shield className="w-6 h-6 text-blue-600" />
                                 </div>
-                                <span className="font-medium text-slate-700">Better Support</span>
+                                <div>
+                                    <h3 className="font-semibold text-slate-800 mb-1">Better Customer Support</h3>
+                                    <p className="text-slate-600">24/7 answers, faster resolutions, happier customers.</p>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-3 p-4 bg-white rounded-xl shadow-sm border">
-                                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                                    <Clock className="w-5 h-5 text-purple-600" />
+                            <div className="flex items-start gap-4 p-3 bg-white rounded-xl shadow-sm border">
+                                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                    <Clock className="w-6 h-6 text-purple-600" />
                                 </div>
-                                <span className="font-medium text-slate-700">Real Results</span>
+                                <div>
+                                    <h3 className="font-semibold text-slate-800 mb-1">Real Results — Fast</h3>
+                                    <p className="text-slate-600">Launch quickly, iterate easily, scale as you grow.</p>
+                                </div>
                             </div>
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Button asChild size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium px-8 py-3 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200">
-                                <a href="#contact">Schedule a Meeting</a>
+                                <a href="#contact">Start in minutes</a>
                             </Button>
                             <Button asChild variant="outline" size="lg" className="border-2 border-slate-200 hover:border-blue-300 hover:bg-blue-50 font-medium px-8 py-3 rounded-xl transition-all duration-200">
-                                <a href="#features">Explore Solutions</a>
+                                <a href="#demo">See a live demo</a>
+                            </Button>
+                            <Button asChild variant="ghost" size="lg" className="hover:bg-slate-100 font-medium px-8 py-3 rounded-xl transition-all duration-200">
+                                <a href="#expert">Talk to an expert</a>
                             </Button>
                         </div>
-                        <p className="text-sm text-slate-500 flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-green-500" />
-                            See measurable results in just 60 days
-                        </p>
                     </div>
                     <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur-3xl" />
