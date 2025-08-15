@@ -12,14 +12,20 @@ app.use(cors({
         'http://localhost:8080',
         'http://localhost:3000',
         'http://localhost:5173',
-        process.env.FRONTEND_URL
+        process.env.FRONTEND_URL,
+        process.env.NODE_ENV === 'production' ? process.env.FRONTEND_URL : undefined
     ].filter(Boolean),
     credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
 
 app.use("/api/v1", router);
+
+app.get("/", (req, res) => {
+    console.log("✅ Root route hit");
+    res.send("welcome to backend");
+});
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
