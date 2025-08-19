@@ -9,6 +9,7 @@ import AICallInterface from "./components/AICallInterface";
 
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -22,9 +23,7 @@ const App = () => (
           {/* Landing page route */}
           <Route path="/" element={<Landing />} />
           <Route path="/agent" element={<AppLayout><AICallInterface /></AppLayout>} />
-
-
-
+          <Route path="/admin" element={<Admin />} />
 
           {/* Catch-all route */}
           <Route path="*" element={<NotFound />} />

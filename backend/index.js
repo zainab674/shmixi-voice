@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import router from "./routes/index.js";
+import { connectDB } from "./services/databaseService.js";
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,9 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin']
 }));
+
+// Connect to MongoDB
+connectDB().catch(console.error);
 
 app.use("/api/v1", router);
 

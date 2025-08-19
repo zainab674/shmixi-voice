@@ -65,37 +65,38 @@ export default function Landing() {
           });
           return;
         }
-    
+     
         setLoading(true);
         try {
           const payload = {
-            _subject: "New Shmixy Lead",
             name,
             company,
             email,
             message,
             source: window.location.href,
             user_agent: navigator.userAgent,
+            timestamp: new Date().toISOString(),
           };
-    
-          const res = await fetch("https://formsubmit.co/ajax/igindi18@gmail.com", {
+     
+          // Save to MongoDB through backend API
+          const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+          const res = await fetch(`${backendUrl}/api/v1/leads`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Accept: "application/json",
             },
             body: JSON.stringify(payload),
           });
-    
+     
           if (!res.ok) throw new Error("Failed to submit");
-    
+     
           setName("");
           setCompany("");
           setEmail("");
           setMessage("");
           toast({
             title: "Thanks!",
-            description: "Your request was sent successfully.",
+            description: "Your request was sent successfully and saved to our database.",
           });
         } catch (err) {
           toast({
@@ -340,6 +341,7 @@ RESPONSE GUIDELINES:
                     <nav className="hidden md:flex items-center gap-8 text-sm font-medium">
                         <a href="#features" className="text-slate-600 hover:text-blue-600 transition-colors duration-200">Solutions</a>
                         <a href="#contact" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-200">Contact</a>
+                        <a href="/admin" className="text-slate-600 hover:text-blue-600 transition-colors duration-200">Admin</a>
                     </nav>
                 </div>
             </header>
