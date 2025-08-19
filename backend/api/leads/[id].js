@@ -49,7 +49,7 @@ async function connectToDatabase() {
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
@@ -57,7 +57,15 @@ export default async function handler(req, res) {
         return;
     }
 
-    if (req.method === 'GET') {
+    const { id } = req.query;
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: "Lead ID is required"
+        });
+    }
+
+    if (req.method === 'PATCH') {
         try {
             // Connect to MongoDB with proper connection management
             await connectToDatabase();
@@ -65,22 +73,31 @@ export default async function handler(req, res) {
             // Get or create Lead model
             const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
 
-            // Fetch all leads with timeout
-            const leads = await Promise.race([
-                Lead.find({}).sort({ timestamp: -1 }),
+            const { notes } = req.body;
+
+            // Update lead with timeout
+            const updatedLead = await Promise.race([
+                Lead.findByIdAndUpdate(id, { notes }, { new: true }),
                 new Promise((_, reject) => 
                     setTimeout(() => reject(new Error('Database operation timeout')), 8000)
                 )
             ]);
 
+            if (!updatedLead) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Lead not found"
+                });
+            }
+
             res.status(200).json({
                 success: true,
-                message: "Leads fetched successfully",
-                data: leads
+                message: "Lead updated successfully",
+                data: updatedLead
             });
 
         } catch (error) {
-            console.error("Error fetching leads:", error);
+            console.error("Error updating lead:", error);
             
             // Handle specific MongoDB errors
             if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
@@ -100,82 +117,57 @@ export default async function handler(req, res) {
         return;
     }
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({
-            success: false,
-            message: 'Method not allowed. Use POST or GET.'
-        });
-    }
+    if (req.method === 'DELETE') {
+        try {
+            // Connect to MongoDB with proper connection management
+            await connectToDatabase();
 
-    try {
-        // Connect to MongoDB with proper connection management
-        await connectToDatabase();
+            // Get or create Lead model
+            const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
 
-        // Get or create Lead model
-        const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
+            // Delete lead with timeout
+            const deletedLead = await Promise.race([
+                Lead.findByIdAndDelete(id),
+                new Promise((_, reject) => 
+                    setTimeout(() => reject(new Error('Database operation timeout')), 8000)
+                )
+            ]);
 
-        const { name, company, email, message, totalRevenue, teamMembers, phone, website, source, user_agent, timestamp } = req.body;
-
-        // Validate required fields
-        if (!name || !company || !email || !message || !source || !user_agent) {
-            return res.status(400).json({
-                success: false,
-                message: "All required fields must be provided"
-            });
-        }
-
-        // Create new lead
-        const newLead = new Lead({
-            name,
-            company,
-            email,
-            message,
-            totalRevenue,
-            teamMembers,
-            phone,
-            website,
-            source,
-            user_agent,
-            timestamp: timestamp || new Date()
-        });
-
-        // Save to database with timeout
-        const savedLead = await Promise.race([
-            newLead.save(),
-            new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Database operation timeout')), 8000)
-            )
-        ]);
-
-        res.status(201).json({
-            success: true,
-            message: "Lead created successfully",
-            data: {
-                id: savedLead._id,
-                name: savedLead.name,
-                company: savedLead.company,
-                email: savedLead.email,
-                status: savedLead.status,
-                timestamp: savedLead.timestamp
+            if (!deletedLead) {
+                return res.status(404).json({
+                    success: false,
+                    message: "Lead not found"
+                });
             }
-        });
 
-    } catch (error) {
-        console.error("Error creating lead:", error);
+            res.status(200).json({
+                success: true,
+                message: "Lead deleted successfully"
+            });
 
-        // Handle specific MongoDB errors
-        if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
-            return res.status(503).json({
+        } catch (error) {
+            console.error("Error deleting lead:", error);
+            
+            // Handle specific MongoDB errors
+            if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
+                return res.status(503).json({
+                    success: false,
+                    message: "Database temporarily unavailable. Please try again.",
+                    error: "Database connection issue"
+                });
+            }
+
+            res.status(500).json({
                 success: false,
-                message: "Database temporarily unavailable. Please try again.",
-                error: "Database connection issue"
+                message: "Internal server error",
+                error: error.message
             });
         }
-
-        res.status(500).json({
-            success: false,
-            message: "Internal server error",
-            error: error.message
-        });
+        return;
     }
+
+    return res.status(405).json({
+        success: false,
+        message: 'Method not allowed. Use PATCH or DELETE.'
+    });
 }
