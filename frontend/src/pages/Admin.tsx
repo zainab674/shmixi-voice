@@ -23,6 +23,10 @@ interface Lead {
     company: string;
     email: string;
     message: string;
+    totalRevenue?: string;
+    teamMembers?: string;
+    phone?: string;
+    website?: string;
     source: string;
     user_agent: string;
     timestamp: string;
@@ -139,7 +143,7 @@ export default function Admin() {
 
     // Export leads to CSV
     const exportToCSV = () => {
-        const headers = ["Name", "Company", "Email", "Message", "Source", "Timestamp", "Notes"];
+        const headers = ["Name", "Company", "Email", "Message", "Total Revenue", "Team Members", "Phone", "Website", "Source", "Timestamp", "Notes"];
         const csvContent = [
             headers.join(","),
             ...filteredLeads.map(lead => [
@@ -147,6 +151,10 @@ export default function Admin() {
                 `"${lead.company}"`,
                 `"${lead.email}"`,
                 `"${lead.message.replace(/"/g, '""')}"`,
+                `"${lead.totalRevenue || ''}"`,
+                `"${lead.teamMembers || ''}"`,
+                `"${lead.phone || ''}"`,
+                `"${lead.website || ''}"`,
                 `"${lead.source}"`,
                 new Date(lead.timestamp).toLocaleDateString(),
                 `"${lead.notes || ''}"`
@@ -367,6 +375,28 @@ export default function Admin() {
                                 <div>
                                     <Label className="text-sm font-medium text-gray-700">Message</Label>
                                     <p className="text-gray-900 mt-1 whitespace-pre-wrap">{editingLead.message}</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label className="text-sm font-medium text-gray-700">Total Revenue</Label>
+                                        <p className="text-gray-900 mt-1">{editingLead.totalRevenue || 'Not specified'}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-sm font-medium text-gray-700">Team Members</Label>
+                                        <p className="text-gray-900 mt-1">{editingLead.teamMembers || 'Not specified'}</p>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <Label className="text-sm font-medium text-gray-700">Phone</Label>
+                                        <p className="text-gray-900 mt-1">{editingLead.phone || 'Not specified'}</p>
+                                    </div>
+                                    <div>
+                                        <Label className="text-sm font-medium text-gray-700">Website</Label>
+                                        <p className="text-gray-900 mt-1">{editingLead.website || 'Not specified'}</p>
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">

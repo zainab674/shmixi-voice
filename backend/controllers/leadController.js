@@ -3,7 +3,7 @@ import Lead from "../models/Lead.js";
 // Create a new lead
 export const createLead = async (req, res) => {
     try {
-        const { name, company, email, message, source, user_agent, timestamp } = req.body;
+        const { name, company, email, message, totalRevenue, teamMembers, phone, website, source, user_agent, timestamp } = req.body;
 
         // Validate required fields
         if (!name || !company || !email || !message || !source || !user_agent) {
@@ -19,6 +19,10 @@ export const createLead = async (req, res) => {
             company,
             email,
             message,
+            totalRevenue,
+            teamMembers,
+            phone,
+            website,
             source,
             user_agent,
             timestamp: timestamp || new Date()

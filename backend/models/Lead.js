@@ -22,6 +22,22 @@ const leadSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    totalRevenue: {
+        type: String,
+        trim: true
+    },
+    teamMembers: {
+        type: String,
+        trim: true
+    },
+    phone: {
+        type: String,
+        trim: true
+    },
+    website: {
+        type: String,
+        trim: true
+    },
     source: {
         type: String,
         required: true

@@ -9,6 +9,10 @@ const leadSchema = new mongoose.Schema({
     company: { type: String, required: true, trim: true },
     email: { type: String, required: true, trim: true, lowercase: true },
     message: { type: String, required: true, trim: true },
+    totalRevenue: { type: String, trim: true },
+    teamMembers: { type: String, trim: true },
+    phone: { type: String, trim: true },
+    website: { type: String, trim: true },
     source: { type: String, required: true },
     user_agent: { type: String, required: true },
     timestamp: { type: Date, default: Date.now },
@@ -43,7 +47,7 @@ export default async function handler(req, res) {
         // Get or create Lead model
         const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
 
-        const { name, company, email, message, source, user_agent, timestamp } = req.body;
+        const { name, company, email, message, totalRevenue, teamMembers, phone, website, source, user_agent, timestamp } = req.body;
 
         // Validate required fields
         if (!name || !company || !email || !message || !source || !user_agent) {
@@ -59,6 +63,10 @@ export default async function handler(req, res) {
             company,
             email,
             message,
+            totalRevenue,
+            teamMembers,
+            phone,
+            website,
             source,
             user_agent,
             timestamp: timestamp || new Date()

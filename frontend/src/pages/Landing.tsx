@@ -50,6 +50,10 @@ export default function Landing() {
     const [company, setCompany] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
+    const [totalRevenue, setTotalRevenue] = useState("");
+    const [teamMembers, setTeamMembers] = useState("");
+    const [phone, setPhone] = useState("");
+    const [website, setWebsite] = useState("");
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -73,6 +77,10 @@ export default function Landing() {
             company,
             email,
             message,
+            totalRevenue,
+            teamMembers,
+            phone,
+            website,
             source: window.location.href,
             user_agent: navigator.userAgent,
             timestamp: new Date().toISOString(),
@@ -94,6 +102,10 @@ export default function Landing() {
           setCompany("");
           setEmail("");
           setMessage("");
+          setTotalRevenue("");
+          setTeamMembers("");
+          setPhone("");
+          setWebsite("");
           toast({
             title: "Thanks!",
             description: "Your request was sent successfully and saved to our database.",
@@ -561,6 +573,54 @@ RESPONSE GUIDELINES:
                                         placeholder="Describe your current processes, tools, and desired outcomes..."
                                         className="border-2 border-slate-200 focus:border-blue-500 rounded-lg px-4 py-3 transition-colors duration-200 resize-none"
                                     />
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="totalRevenue" className="text-sm font-medium text-slate-700">Total Annual Revenue</Label>
+                                        <Input
+                                            id="totalRevenue"
+                                            value={totalRevenue}
+                                            onChange={(e) => setTotalRevenue(e.target.value)}
+                                            placeholder="e.g., $500K, £1M, €2M"
+                                            className="border-2 border-slate-200 focus:border-blue-500 rounded-lg px-4 py-3 transition-colors duration-200"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="teamMembers" className="text-sm font-medium text-slate-700">Number of Team Members</Label>
+                                        <Input
+                                            id="teamMembers"
+                                            value={teamMembers}
+                                            onChange={(e) => setTeamMembers(e.target.value)}
+                                            placeholder="e.g., 25, 100+"
+                                            className="border-2 border-slate-200 focus:border-blue-500 rounded-lg px-4 py-3 transition-colors duration-200"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid md:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="phone" className="text-sm font-medium text-slate-700">Phone Number</Label>
+                                        <Input
+                                            id="phone"
+                                            type="tel"
+                                            value={phone}
+                                            onChange={(e) => setPhone(e.target.value)}
+                                            placeholder="+44 20 7123 4567"
+                                            className="border-2 border-slate-200 focus:border-blue-500 rounded-lg px-4 py-3 transition-colors duration-200"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="website" className="text-sm font-medium text-slate-700">Website URL</Label>
+                                        <Input
+                                            id="website"
+                                            type="url"
+                                            value={website}
+                                            onChange={(e) => setWebsite(e.target.value)}
+                                            placeholder="https://www.yourcompany.com"
+                                            className="border-2 border-slate-200 focus:border-blue-500 rounded-lg px-4 py-3 transition-colors duration-200"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="pt-4">
