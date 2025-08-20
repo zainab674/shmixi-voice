@@ -20,7 +20,7 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "livekit-server-sdk": "^2.13.1",
-    "mongoose": "^8.16.4"
+    "mongodb": "^6.18.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

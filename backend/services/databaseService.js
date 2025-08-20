@@ -1,64 +1,74 @@
-import mongoose from "mongoose";
+import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = 'mongodb+srv://zainabsarwar58:zainab984@cluster0.zjkfo.mongodb.net/mydatabase?retryWrites=true&w=majority&appName=Cluster0';
+const DB_NAME = 'mydatabase';
+const COLLECTION_NAME = 'leads';
 
-let isConnected = false;
+let client = null;
+let db = null;
 
+// Connect to MongoDB
 export const connectDB = async () => {
-    if (isConnected) {
-        console.log("✅ MongoDB already connected");
-        return;
-    }
-
     try {
-        const conn = await mongoose.connect(MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
-
-        isConnected = true;
-        console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-
-        // Handle connection events
-        mongoose.connection.on('error', (err) => {
-            console.error('❌ MongoDB connection error:', err);
-            isConnected = false;
-        });
-
-        mongoose.connection.on('disconnected', () => {
-            console.log('⚠️ MongoDB disconnected');
-            isConnected = false;
-        });
-
-        mongoose.connection.on('reconnected', () => {
-            console.log('🔄 MongoDB reconnected');
-            isConnected = false;
-        });
-
+        if (!client) {
+            client = new MongoClient(MONGODB_URI);
+            await client.connect();
+            db = client.db(DB_NAME);
+            console.log('✅ Connected to MongoDB successfully');
+        }
+        return db;
     } catch (error) {
-        console.error('❌ MongoDB connection failed:', error);
-        isConnected = false;
+        console.error('❌ MongoDB connection error:', error);
         throw error;
     }
 };
 
-export const disconnectDB = async () => {
-    if (!isConnected) {
-        return;
+// Get database instance
+export const getDB = async () => {
+    if (!db) {
+        await connectDB();
     }
+    return db;
+};
 
+// Get collection
+export const getCollection = async (collectionName = COLLECTION_NAME) => {
+    const database = await getDB();
+    return database.collection(collectionName);
+};
+
+// Close MongoDB connection
+export const disconnectDB = async () => {
     try {
-        await mongoose.disconnect();
-        isConnected = false;
-        console.log('✅ MongoDB disconnected');
+        if (client) {
+            await client.close();
+            client = null;
+            db = null;
+            console.log('✅ MongoDB connection closed');
+        }
     } catch (error) {
-        console.error('❌ Error disconnecting from MongoDB:', error);
+        console.error('❌ Error closing MongoDB connection:', error);
     }
 };
 
+// Get connection status
 export const getConnectionStatus = () => {
     return {
-        isConnected,
-        status: mongoose.connection.readyState
+        isConnected: client !== null && client.topology?.isConnected(),
+        clientExists: client !== null,
+        dbExists: db !== null
     };
 };
+
+// Health check
+export const healthCheck = async () => {
+    try {
+        const database = await getDB();
+        await database.admin().ping();
+        return { status: 'healthy', message: 'MongoDB connection is working' };
+    } catch (error) {
+        return { status: 'unhealthy', message: error.message };
+    }
+};
+
+

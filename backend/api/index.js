@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import router from "../routes/index.js";
+import { healthCheck, getConnectionStatus } from "../services/databaseService.js";
 
 const app = express();
 
@@ -27,6 +28,29 @@ app.use("/api/v1", router);
 app.get("/", (req, res) => {
     console.log("✅ Root route hit");
     res.send("welcome to backend");
+});
+
+// Health check endpoint
+app.get("/health", async (req, res) => {
+    try {
+        const dbHealth = await healthCheck();
+        const connectionStatus = getConnectionStatus();
+        
+        res.json({
+            success: true,
+            timestamp: new Date().toISOString(),
+            database: dbHealth,
+            connection: connectionStatus,
+            message: "Backend is running"
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            timestamp: new Date().toISOString(),
+            error: error.message,
+            message: "Backend health check failed"
+        });
+    }
 });
 
 export default app;

@@ -20,32 +20,6 @@ const leadSchema = new mongoose.Schema({
     notes: { type: String, trim: true }
 }, { timestamps: true });
 
-// Connection management
-let cachedConnection = null;
-
-async function connectToDatabase() {
-    if (cachedConnection) {
-        return cachedConnection;
-    }
-
-    try {
-        const connection = await mongoose.connect(MONGODB_URI, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            serverSelectionTimeoutMS: 5000, // 5 second timeout
-            socketTimeoutMS: 45000, // 45 second timeout
-            bufferCommands: false, // Disable mongoose buffering
-            bufferMaxEntries: 0, // Disable mongoose buffering
-        });
-
-        cachedConnection = connection;
-        return connection;
-    } catch (error) {
-        console.error('MongoDB connection error:', error);
-        throw error;
-    }
-}
-
 export default async function handler(req, res) {
     // Enable CORS
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,60 +31,19 @@ export default async function handler(req, res) {
         return;
     }
 
-    if (req.method === 'GET') {
-        try {
-            // Connect to MongoDB with proper connection management
-            await connectToDatabase();
-
-            // Get or create Lead model
-            const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
-
-            // Fetch all leads with timeout
-            const leads = await Promise.race([
-                Lead.find({}).sort({ timestamp: -1 }),
-                new Promise((_, reject) => 
-                    setTimeout(() => reject(new Error('Database operation timeout')), 8000)
-                )
-            ]);
-
-            res.status(200).json({
-                success: true,
-                message: "Leads fetched successfully",
-                data: leads
-            });
-
-        } catch (error) {
-            console.error("Error fetching leads:", error);
-            
-            // Handle specific MongoDB errors
-            if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
-                return res.status(503).json({
-                    success: false,
-                    message: "Database temporarily unavailable. Please try again.",
-                    error: "Database connection issue"
-                });
-            }
-
-            res.status(500).json({
-                success: false,
-                message: "Internal server error",
-                error: error.message
-            });
-        }
-        return;
-    }
-
     if (req.method !== 'POST') {
-        return res.status(405).json({
-            success: false,
-            message: 'Method not allowed. Use POST or GET.'
+        return res.status(405).json({ 
+            success: false, 
+            message: 'Method not allowed. Use POST.' 
         });
     }
 
     try {
-        // Connect to MongoDB with proper connection management
-        await connectToDatabase();
-
+        // Connect to MongoDB if not already connected
+        if (mongoose.connection.readyState === 0) {
+            await mongoose.connect(MONGODB_URI);
+        }
+        
         // Get or create Lead model
         const Lead = mongoose.models.Lead || mongoose.model('Lead', leadSchema);
 
@@ -139,13 +72,8 @@ export default async function handler(req, res) {
             timestamp: timestamp || new Date()
         });
 
-        // Save to database with timeout
-        const savedLead = await Promise.race([
-            newLead.save(),
-            new Promise((_, reject) =>
-                setTimeout(() => reject(new Error('Database operation timeout')), 8000)
-            )
-        ]);
+        // Save to database
+        const savedLead = await newLead.save();
 
         res.status(201).json({
             success: true,
@@ -162,16 +90,6 @@ export default async function handler(req, res) {
 
     } catch (error) {
         console.error("Error creating lead:", error);
-
-        // Handle specific MongoDB errors
-        if (error.name === 'MongoNetworkError' || error.name === 'MongoTimeoutError') {
-            return res.status(503).json({
-                success: false,
-                message: "Database temporarily unavailable. Please try again.",
-                error: "Database connection issue"
-            });
-        }
-
         res.status(500).json({
             success: false,
             message: "Internal server error",

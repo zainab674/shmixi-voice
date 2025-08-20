@@ -1,4 +1,10 @@
-import Lead from "../models/Lead.js";
+import { 
+    createLead as createLeadService, 
+    getAllLeads as getAllLeadsService, 
+    getLeadById as getLeadByIdService, 
+    updateLeadStatus as updateLeadStatusService, 
+    deleteLead as deleteLeadService 
+} from "../services/leadService.js";
 
 // Create a new lead
 export const createLead = async (req, res) => {
@@ -13,8 +19,8 @@ export const createLead = async (req, res) => {
             });
         }
 
-        // Create new lead
-        const newLead = new Lead({
+        // Create lead data object
+        const leadData = {
             name,
             company,
             email,
@@ -26,21 +32,21 @@ export const createLead = async (req, res) => {
             source,
             user_agent,
             timestamp: timestamp || new Date()
-        });
+        };
 
-        // Save to database
-        const savedLead = await newLead.save();
+        // Save to database using service
+        const result = await createLeadService(leadData);
 
         res.status(201).json({
             success: true,
             message: "Lead created successfully",
             data: {
-                id: savedLead._id,
-                name: savedLead.name,
-                company: savedLead.company,
-                email: savedLead.email,
-                status: savedLead.status,
-                timestamp: savedLead.timestamp
+                id: result.id,
+                name: leadData.name,
+                company: leadData.company,
+                email: leadData.email,
+                status: 'new',
+                timestamp: leadData.timestamp
             }
         });
 
@@ -57,9 +63,7 @@ export const createLead = async (req, res) => {
 // Get all leads (for admin purposes)
 export const getAllLeads = async (req, res) => {
     try {
-        const leads = await Lead.find({})
-            .sort({ createdAt: -1 })
-            .select('-__v');
+        const leads = await getAllLeadsService();
 
         res.status(200).json({
             success: true,
@@ -81,7 +85,7 @@ export const getAllLeads = async (req, res) => {
 export const getLeadById = async (req, res) => {
     try {
         const { id } = req.params;
-        const lead = await Lead.findById(id).select('-__v');
+        const lead = await getLeadByIdService(id);
 
         if (!lead) {
             return res.status(404).json({
@@ -111,13 +115,9 @@ export const updateLeadStatus = async (req, res) => {
         const { id } = req.params;
         const { status, notes } = req.body;
 
-        const lead = await Lead.findByIdAndUpdate(
-            id,
-            { status, notes },
-            { new: true, runValidators: true }
-        ).select('-__v');
+        const success = await updateLeadStatusService(id, status, notes);
 
-        if (!lead) {
+        if (!success) {
             return res.status(404).json({
                 success: false,
                 message: "Lead not found"
@@ -126,8 +126,7 @@ export const updateLeadStatus = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: "Lead updated successfully",
-            data: lead
+            message: "Lead updated successfully"
         });
 
     } catch (error) {
@@ -144,9 +143,9 @@ export const updateLeadStatus = async (req, res) => {
 export const deleteLead = async (req, res) => {
     try {
         const { id } = req.params;
-        const lead = await Lead.findByIdAndDelete(id);
+        const success = await deleteLeadService(id);
 
-        if (!lead) {
+        if (!success) {
             return res.status(404).json({
                 success: false,
                 message: "Lead not found"
