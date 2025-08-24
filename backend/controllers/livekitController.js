@@ -17,8 +17,8 @@ export const createToken = catchAsyncError(async (req, res, next) => {
         canSubscribe: true,
     };
 
-    const token = await createLivekitToken({ identity,metadata:JSON.stringify(metadata)}, grant);
- 
+    const token = await createLivekitToken({ identity, metadata: JSON.stringify(metadata) }, grant);
+
 
     res.status(200).json({
         success: true,
