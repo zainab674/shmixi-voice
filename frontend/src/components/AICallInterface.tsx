@@ -8,7 +8,7 @@ import useConnect from "@/hooks/useConnectHook";
 import { LiveKitRoom, useRoomContext, RoomAudioRenderer, StartAudio, useConnectionState } from "@livekit/components-react";
 import CallPopupComponent from "@/components/CallPopupComponent";
 import CallDemoCard from "@/components/CallDemoCardComponent";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 /* ----------------- helpers ----------------- */
 // LiveKit now handles product detection automatically through function tools
@@ -17,6 +17,7 @@ import { useLocation } from "react-router-dom";
 /* ----------------- component ----------------- */
 const AICallInterface = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const defaultPrompt = location.state?.prompt || "You are the AI assistant.";
 
   const [isCallActive, setIsCallActive] = useState(false);
@@ -479,14 +480,19 @@ const AICallInterface = () => {
                           <span className="text-xs text-slate-500 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">Material: {p.material}</span>
                         </div>
                         <div className="flex gap-2">
-                          {/* <Button
+                          <Button
                             size="sm"
                             className="bg-green-600 hover:bg-green-700 text-white"
-                            onClick={() => window.open(p.url, "_blank")}
+                            onClick={() => {
+                              const confirmEnd = window.confirm("Do you want to end the call and go to checkout?");
+                              if (!confirmEnd) return;
+                              handleEndCall();
+                              navigate("/checkout", { state: { product: p } });
+                            }}
                           >
                             View Product
-                          </Button> */}
-                          {/* <Button
+                          </Button>
+                          <Button
                             size="sm"
                             variant="outline"
                             onClick={() => {
@@ -498,7 +504,7 @@ const AICallInterface = () => {
                             }}
                           >
                             Info
-                          </Button> */}
+                          </Button>
                         </div>
                       </div>
                     </div>
